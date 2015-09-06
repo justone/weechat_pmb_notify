@@ -67,7 +67,9 @@ SETTINGS = {
 # -----------------------------------------------------------------------------
 try:
     import re
+    import os
     import weechat
+    import subprocess
     IMPORT_OK = True
 except ImportError as error:
     IMPORT_OK = False
@@ -75,7 +77,7 @@ except ImportError as error:
         print('This script must be run under WeeChat.')
         print('Get WeeChat at http://www.weechat.org.')
     else:
-        weechat.prnt('', 'anotify: {0}'.format(error))
+        weechat.prnt('', 'pmb_notify: {0}'.format(error))
 
 # -----------------------------------------------------------------------------
 # Globals
@@ -371,6 +373,14 @@ def cb_process_message(
     message
 ):
     '''Delegates incoming messages to appropriate handlers.'''
+
+    # first, check if there is a PMB key in the env
+    if 'PMB_KEY' not in os.environ:
+        weechat.prnt(
+            wbuffer,
+            "==>\tUnable to notify, no PMB_KEY in environment")
+        return weechat.WEECHAT_RC_OK
+
     tags = set(tags.split(','))
     functions = globals()
     is_public_message = tags.issuperset(
@@ -401,17 +411,22 @@ def cb_process_message(
 
 def a_notify(notification, title, description, priority=False):
     '''Returns whether notifications should be sticky.'''
-    is_away = STATE['is_away']
-    time_out = 5000
-    if weechat.config_get_plugin('sticky') == 'on':
-        time_out = 0
-    if weechat.config_get_plugin('sticky_away') == 'on' and is_away:
-        time_out = 0
+
+    if 'PMB_KEY' not in os.environ:
+        return
+
     try:
-        if priority and time_out > 0:
-            pass
+        # weechat.prnt("", "Calling pmb")
+        # weechat.prnt("", "path: {}".format(os.environ['PATH']))
+        cmd = ["pmb", "notify", "-m", description]
+        if priority:
+            cmd.append('-i')
+
+        subprocess.check_call(cmd)
+    except subprocess.CalledProcessError as cpe:
+        weechat.prnt('', 'pmb_notify: {0}'.format(cpe.output))
     except Exception as error:
-        weechat.prnt('', 'anotify: {0}'.format(error))
+        weechat.prnt('', 'pmb_notify: {0}'.format(error))
 
 
 # -----------------------------------------------------------------------------
