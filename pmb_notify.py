@@ -1,5 +1,9 @@
 # -*- coding: utf-8 -*-
 #
+# pmb_notify.py
+# Copyright (c) 2015 Nate Jones <nate@endot.org>
+#
+# based on:
 # anotify.py
 # Copyright (c) 2012 magnific0 <jacco.geul@gmail.com>
 #
@@ -26,11 +30,11 @@
 # SOFTWARE.
 
 
-SCRIPT_NAME = 'anotify'
-SCRIPT_AUTHOR = 'magnific0'
-SCRIPT_VERSION = '1.0.1'
+SCRIPT_NAME = 'pmb_notify'
+SCRIPT_AUTHOR = 'justone'
+SCRIPT_VERSION = '1.0.0'
 SCRIPT_LICENSE = 'MIT'
-SCRIPT_DESC = 'Sends libnotify notifications upon events.'
+SCRIPT_DESC = 'Sends notifications via PMB.'
 
 
 # Changelog
