@@ -59,7 +59,6 @@ SETTINGS = {
     'show_upgrade_ended': 'on',
     'sticky': 'off',
     'sticky_away': 'on',
-    'icon': '/usr/share/pixmaps/weechat.xpm',
 }
 
 
@@ -69,7 +68,6 @@ SETTINGS = {
 try:
     import re
     import weechat
-    import pynotify
     IMPORT_OK = True
 except ImportError as error:
     IMPORT_OK = False
@@ -176,7 +174,7 @@ def notify_highlighted_message(prefix, message):
             'Highlight',
             'Highlighted Message',
             "{0}: {1}".format(prefix, message),
-            priority=pynotify.URGENCY_CRITICAL)
+            priority=True)
 
 
 def notify_public_message_or_action(prefix, message, highlighted):
@@ -230,8 +228,7 @@ def notify_public_action_message(prefix, message, highlighted):
         a_notify(
             'Action',
             'Public Action Message',
-            '{0}: {1}'.format(prefix, message),
-            priority=pynotify.URGENCY_NORMAL)
+            '{0}: {1}'.format(prefix, message))
 
 
 def notify_private_action_message(prefix, message, highlighted):
@@ -242,8 +239,7 @@ def notify_private_action_message(prefix, message, highlighted):
         a_notify(
             'Action',
             'Private Action Message',
-            '{0}: {1}'.format(prefix, message),
-            priority=pynotify.URGENCY_NORMAL)
+            '{0}: {1}'.format(prefix, message))
 
 
 def notify_notice_message(prefix, message, highlighted):
@@ -403,21 +399,17 @@ def cb_process_message(
     return weechat.WEECHAT_RC_OK
 
 
-def a_notify(notification, title, description, priority=pynotify.URGENCY_LOW):
+def a_notify(notification, title, description, priority=False):
     '''Returns whether notifications should be sticky.'''
     is_away = STATE['is_away']
-    icon = STATE['icon']
     time_out = 5000
     if weechat.config_get_plugin('sticky') == 'on':
         time_out = 0
     if weechat.config_get_plugin('sticky_away') == 'on' and is_away:
         time_out = 0
     try:
-        pynotify.init("wee-notifier")
-        wn = pynotify.Notification(title, description, icon)
-        wn.set_urgency(priority)
-        wn.set_timeout(time_out)
-        wn.show()
+        if priority and time_out > 0:
+            pass
     except Exception as error:
         weechat.prnt('', 'anotify: {0}'.format(error))
 
