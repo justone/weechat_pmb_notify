@@ -68,7 +68,6 @@ SETTINGS = {
 # -----------------------------------------------------------------------------
 try:
     import re
-    import os
     import weechat
     import pynotify
     IMPORT_OK = True
@@ -89,31 +88,28 @@ TAGGED_MESSAGES = {
     'notice message': set(['irc_notice', 'notify_private']),
     'invite message': set(['irc_invite', 'notify_highlight']),
     'channel topic': set(['irc_topic', ]),
-    #'away status': set(['away_info', ]),
 }
 
 
 UNTAGGED_MESSAGES = {
-    'away status':
-        re.compile(r'^You ((\w+).){2,3}marked as being away', re.UNICODE),
-    'dcc chat request':
-        re.compile(r'^xfer: incoming chat request from (\w+)', re.UNICODE),
-    'dcc chat closed':
-        re.compile(r'^xfer: chat closed with (\w+)', re.UNICODE),
-    'dcc get request':
-        re.compile(
-            r'^xfer: incoming file from (\w+) [^:]+: ((?:,\w|[^,])+),',
-            re.UNICODE),
-    'dcc get completed':
-        re.compile(r'^xfer: file ([^\s]+) received from \w+: OK', re.UNICODE),
-    'dcc get failed':
-        re.compile(
-            r'^xfer: file ([^\s]+) received from \w+: FAILED',
-            re.UNICODE),
-    'dcc send completed':
-        re.compile(r'^xfer: file ([^\s]+) sent to \w+: OK', re.UNICODE),
-    'dcc send failed':
-        re.compile(r'^xfer: file ([^\s]+) sent to \w+: FAILED', re.UNICODE),
+    'away status': re.compile(
+        r'^You ((\w+).){2,3}marked as being away', re.UNICODE),
+    'dcc chat request': re.compile(
+        r'^xfer: incoming chat request from (\w+)', re.UNICODE),
+    'dcc chat closed': re.compile(
+        r'^xfer: chat closed with (\w+)', re.UNICODE),
+    'dcc get request': re.compile(
+        r'^xfer: incoming file from (\w+) [^:]+: ((?:,\w|[^,])+),',
+        re.UNICODE),
+    'dcc get completed': re.compile(
+        r'^xfer: file ([^\s]+) received from \w+: OK', re.UNICODE),
+    'dcc get failed': re.compile(
+        r'^xfer: file ([^\s]+) received from \w+: FAILED',
+        re.UNICODE),
+    'dcc send completed': re.compile(
+        r'^xfer: file ([^\s]+) sent to \w+: OK', re.UNICODE),
+    'dcc send failed': re.compile(
+        r'^xfer: file ([^\s]+) sent to \w+: FAILED', re.UNICODE),
 }
 
 
@@ -286,7 +282,7 @@ def notify_channel_topic(prefix, message, highlighted):
     if weechat.config_get_plugin("show_channel_topic") == "on":
         regex = re.compile(
             r'^\w+ has (?:changed|unset) topic for ([^\s]+)' +
-                '(?:(?: from "(?:(?:"\w|[^"])+)")? to "((?:"\w|[^"])+)")?',
+            '(?:(?: from "(?:(?:"\w|[^"])+)")? to "((?:"\w|[^"])+)")?',
             re.UNICODE)
         match = regex.match(message)
         if match:
@@ -436,20 +432,7 @@ def main():
         if not weechat.config_is_set_plugin(option):
             weechat.config_set_plugin(option, value)
     # Initialize.
-    name = "WeeChat"
     icon = "/usr/share/pixmaps/weechat.xpm"
-    notifications = [
-        'Public',
-        'Private',
-        'Action',
-        'Notice',
-        'Invite',
-        'Highlight',
-        'Server',
-        'Channel',
-        'DCC',
-        'WeeChat'
-    ]
     STATE['icon'] = icon
     # Register hooks.
     weechat.hook_signal(
