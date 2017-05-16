@@ -418,9 +418,11 @@ def a_notify(notification, title, description, priority=False):
     try:
         # weechat.prnt("", "Calling pmb")
         # weechat.prnt("", "path: {}".format(os.environ['PATH']))
-        cmd = ["pmb", "notify", "-m", description]
-        if priority:
-            cmd.append('-i')
+        cmd = ["pmb", "-t", "notify", "-m", description]
+
+        # non priority messages get put to bottom level
+        if not priority:
+            cmd.extend(['-l', '1'])
 
         subprocess.check_call(cmd)
     except subprocess.CalledProcessError as cpe:
